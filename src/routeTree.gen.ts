@@ -10,33 +10,179 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShellRouteImport } from './routes/_shell'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ShellAccountsRouteImport } from './routes/_shell.accounts'
+import { Route as ShellAiReviewRouteImport } from './routes/_shell.ai-review'
+import { Route as ShellCategoriesRouteImport } from './routes/_shell.categories'
+import { Route as ShellSettingsRouteImport } from './routes/_shell.settings'
+import { Route as ShellTransactionsRouteImport } from './routes/_shell.transactions'
+import { Route as ShellDashboardIndexRouteImport } from './routes/_shell.dashboard.index'
+import { Route as ShellDashboardYearlyRouteImport } from './routes/_shell.dashboard.yearly'
+import { Route as ShellStatementsIndexRouteImport } from './routes/_shell.statements.index'
+import { Route as ShellStatementsIdRouteImport } from './routes/_shell.statements.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShellRoute = ShellRouteImport.update({
+  id: '/_shell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShellAccountsRoute = ShellAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellAiReviewRoute = ShellAiReviewRouteImport.update({
+  id: '/ai-review',
+  path: '/ai-review',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellCategoriesRoute = ShellCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellSettingsRoute = ShellSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellTransactionsRoute = ShellTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellDashboardIndexRoute = ShellDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellDashboardYearlyRoute = ShellDashboardYearlyRouteImport.update({
+  id: '/dashboard/yearly',
+  path: '/dashboard/yearly',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellStatementsIndexRoute = ShellStatementsIndexRouteImport.update({
+  id: '/statements/',
+  path: '/statements/',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellStatementsIdRoute = ShellStatementsIdRouteImport.update({
+  id: '/statements/$id',
+  path: '/statements/$id',
+  getParentRoute: () => ShellRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/accounts': typeof ShellAccountsRoute
+  '/ai-review': typeof ShellAiReviewRoute
+  '/categories': typeof ShellCategoriesRoute
+  '/settings': typeof ShellSettingsRoute
+  '/transactions': typeof ShellTransactionsRoute
+  '/dashboard/yearly': typeof ShellDashboardYearlyRoute
+  '/statements/$id': typeof ShellStatementsIdRoute
+  '/dashboard/': typeof ShellDashboardIndexRoute
+  '/statements/': typeof ShellStatementsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/accounts': typeof ShellAccountsRoute
+  '/ai-review': typeof ShellAiReviewRoute
+  '/categories': typeof ShellCategoriesRoute
+  '/settings': typeof ShellSettingsRoute
+  '/transactions': typeof ShellTransactionsRoute
+  '/dashboard/yearly': typeof ShellDashboardYearlyRoute
+  '/statements/$id': typeof ShellStatementsIdRoute
+  '/dashboard': typeof ShellDashboardIndexRoute
+  '/statements': typeof ShellStatementsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_shell': typeof ShellRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/_shell/accounts': typeof ShellAccountsRoute
+  '/_shell/ai-review': typeof ShellAiReviewRoute
+  '/_shell/categories': typeof ShellCategoriesRoute
+  '/_shell/settings': typeof ShellSettingsRoute
+  '/_shell/transactions': typeof ShellTransactionsRoute
+  '/_shell/dashboard/yearly': typeof ShellDashboardYearlyRoute
+  '/_shell/statements/$id': typeof ShellStatementsIdRoute
+  '/_shell/dashboard/': typeof ShellDashboardIndexRoute
+  '/_shell/statements/': typeof ShellStatementsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/accounts'
+    | '/ai-review'
+    | '/categories'
+    | '/settings'
+    | '/transactions'
+    | '/dashboard/yearly'
+    | '/statements/$id'
+    | '/dashboard/'
+    | '/statements/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/accounts'
+    | '/ai-review'
+    | '/categories'
+    | '/settings'
+    | '/transactions'
+    | '/dashboard/yearly'
+    | '/statements/$id'
+    | '/dashboard'
+    | '/statements'
+  id:
+    | '__root__'
+    | '/'
+    | '/_shell'
+    | '/login'
+    | '/register'
+    | '/_shell/accounts'
+    | '/_shell/ai-review'
+    | '/_shell/categories'
+    | '/_shell/settings'
+    | '/_shell/transactions'
+    | '/_shell/dashboard/yearly'
+    | '/_shell/statements/$id'
+    | '/_shell/dashboard/'
+    | '/_shell/statements/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ShellRoute: typeof ShellRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +194,125 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_shell': {
+      id: '/_shell'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_shell/accounts': {
+      id: '/_shell/accounts'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof ShellAccountsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/ai-review': {
+      id: '/_shell/ai-review'
+      path: '/ai-review'
+      fullPath: '/ai-review'
+      preLoaderRoute: typeof ShellAiReviewRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/categories': {
+      id: '/_shell/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof ShellCategoriesRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/settings': {
+      id: '/_shell/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof ShellSettingsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/transactions': {
+      id: '/_shell/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof ShellTransactionsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/dashboard/': {
+      id: '/_shell/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof ShellDashboardIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/dashboard/yearly': {
+      id: '/_shell/dashboard/yearly'
+      path: '/dashboard/yearly'
+      fullPath: '/dashboard/yearly'
+      preLoaderRoute: typeof ShellDashboardYearlyRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/statements/': {
+      id: '/_shell/statements/'
+      path: '/statements'
+      fullPath: '/statements/'
+      preLoaderRoute: typeof ShellStatementsIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/statements/$id': {
+      id: '/_shell/statements/$id'
+      path: '/statements/$id'
+      fullPath: '/statements/$id'
+      preLoaderRoute: typeof ShellStatementsIdRouteImport
+      parentRoute: typeof ShellRoute
+    }
   }
 }
 
+interface ShellRouteChildren {
+  ShellAccountsRoute: typeof ShellAccountsRoute
+  ShellAiReviewRoute: typeof ShellAiReviewRoute
+  ShellCategoriesRoute: typeof ShellCategoriesRoute
+  ShellSettingsRoute: typeof ShellSettingsRoute
+  ShellTransactionsRoute: typeof ShellTransactionsRoute
+  ShellDashboardYearlyRoute: typeof ShellDashboardYearlyRoute
+  ShellStatementsIdRoute: typeof ShellStatementsIdRoute
+  ShellDashboardIndexRoute: typeof ShellDashboardIndexRoute
+  ShellStatementsIndexRoute: typeof ShellStatementsIndexRoute
+}
+
+const ShellRouteChildren: ShellRouteChildren = {
+  ShellAccountsRoute: ShellAccountsRoute,
+  ShellAiReviewRoute: ShellAiReviewRoute,
+  ShellCategoriesRoute: ShellCategoriesRoute,
+  ShellSettingsRoute: ShellSettingsRoute,
+  ShellTransactionsRoute: ShellTransactionsRoute,
+  ShellDashboardYearlyRoute: ShellDashboardYearlyRoute,
+  ShellStatementsIdRoute: ShellStatementsIdRoute,
+  ShellDashboardIndexRoute: ShellDashboardIndexRoute,
+  ShellStatementsIndexRoute: ShellStatementsIndexRoute,
+}
+
+const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ShellRoute: ShellRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
