@@ -96,11 +96,17 @@ function AccountsPage() {
                     {maskAccount(a.lastFour)} · {a.currency}
                   </p>
                 </div>
-                {a.active ? (
-                  <Button variant="outline" size="sm" onClick={() => setPending(a.id)}>
-                    Deactivate
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => openEdit(a)}>
+                    Edit
                   </Button>
-                ) : null}
+                  {a.active ? (
+                    <Button variant="ghost" size="sm" onClick={() => setPending(a.id)}>
+                      Deactivate
+                    </Button>
+                  ) : null}
+                </div>
+
               </article>
             );
           })}
