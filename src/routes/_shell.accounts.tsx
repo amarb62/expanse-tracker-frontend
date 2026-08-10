@@ -31,6 +31,17 @@ function AccountsPage() {
   const { data, isPending, isError, error, refetch } = useAccounts();
   const deactivate = useDeactivateAccount();
   const [pending, setPending] = useState<string | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editing, setEditing] = useState<Account | null>(null);
+
+  const openCreate = () => {
+    setEditing(null);
+    setEditorOpen(true);
+  };
+  const openEdit = (account: Account) => {
+    setEditing(account);
+    setEditorOpen(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -39,7 +50,14 @@ function AccountsPage() {
           <h1 className="text-2xl font-semibold">Accounts</h1>
           <p className="text-sm text-muted-foreground">Bank accounts and credit cards</p>
         </div>
+        <Button onClick={openCreate}>
+          <Plus className="h-4 w-4" />
+          New account
+        </Button>
       </div>
+
+      <AccountModal open={editorOpen} onOpenChange={setEditorOpen} account={editing} />
+
 
       {isPending ? (
         <LoadingSkeleton rows={3} />
