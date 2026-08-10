@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -29,21 +29,27 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   categories: Category[];
+  /** When provided the dialog edits this category instead of creating a new one. */
+  category?: Category | null;
 }
 
-export function CategoryModal({ open, onOpenChange, categories }: Props) {
+export function CategoryModal({ open, onOpenChange, categories, category }: Props) {
   const save = useSaveCategory();
+  const isEdit = Boolean(category);
   const [name, setName] = useState("");
   const [parentId, setParentId] = useState<string>(NONE);
   const [color, setColor] = useState<string>(COLORS[0]!);
 
-  const roots = categories.filter((c) => c.parentId === null && c.active);
+  useEffect(() => {
+    if (!open) return;
+    setName(category?.name ?? "");
+    setParentId(category?.parentId ?? NONE);
+    setColor(category?.color ?? COLORS[0]!);
+  }, [open, category]);
 
-  const reset = () => {
-    setName("");
-    setParentId(NONE);
-    setColor(COLORS[0]!);
-  };
+  const roots = categories.filter(
+    (c) => c.parentId === null && c.active && c.id !== category?.id,
+  );
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -57,14 +63,22 @@ export function CategoryModal({ open, onOpenChange, categories }: Props) {
       return;
     }
     save.mutate(
-      { input: { name: trimmed, parentId: parentId === NONE ? null : parentId, color } },
+      {
+        ...(category ? { id: category.id } : {}),
+        input: { name: trimmed, parentId: parentId === NONE ? null : parentId, color },
+      },
       {
         onSuccess: () => {
-          toast.success("Category created");
-          reset();
+          toast.success(isEdit ? "Category updated" : "Category created");
           onOpenChange(false);
         },
-        onError: (error) => toast.error(errorMessage(error, "We couldn't create this category.")),
+        onError: (error) =>
+          toast.error(
+            errorMessage(
+              error,
+              isEdit ? "We couldn't update this category." : "We couldn't create this category.",
+            ),
+          ),
       },
     );
   };
@@ -73,9 +87,11 @@ export function CategoryModal({ open, onOpenChange, categories }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>New category</DialogTitle>
+          <DialogTitle>{isEdit ? "Edit category" : "New category"}</DialogTitle>
           <DialogDescription>
-            Add a top-level category or nest one under an existing parent.
+            {isEdit
+              ? "Rename this category, move it under a different parent, or change its color."
+              : "Add a top-level category or nest one under an existing parent."}
           </DialogDescription>
         </DialogHeader>
 
@@ -132,7 +148,7 @@ export function CategoryModal({ open, onOpenChange, categories }: Props) {
               Cancel
             </Button>
             <Button type="submit" disabled={save.isPending}>
-              {save.isPending ? "Saving…" : "Create category"}
+              {save.isPending ? "Saving…" : isEdit ? "Save changes" : "Create category"}
             </Button>
           </DialogFooter>
         </form>
