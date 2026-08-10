@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CreditCard, Landmark } from "lucide-react";
+import { CreditCard, Landmark, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ErrorState, LoadingSkeleton } from "@/components/states";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { AccountModal } from "@/features/accounts/AccountModal";
 import { useAccounts, useDeactivateAccount } from "@/hooks/queries";
 import { errorMessage } from "@/api/client";
 import { maskAccount } from "@/utils/format";
+import type { Account } from "@/types";
 
 export const Route = createFileRoute("/_shell/accounts")({
   head: () => ({
