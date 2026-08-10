@@ -1,14 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CreditCard, Landmark } from "lucide-react";
+import { CreditCard, Landmark, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ErrorState, LoadingSkeleton } from "@/components/states";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { AccountModal } from "@/features/accounts/AccountModal";
 import { useAccounts, useDeactivateAccount } from "@/hooks/queries";
 import { errorMessage } from "@/api/client";
 import { maskAccount } from "@/utils/format";
+import type { Account } from "@/types";
 
 export const Route = createFileRoute("/_shell/accounts")({
   head: () => ({
@@ -29,6 +31,17 @@ function AccountsPage() {
   const { data, isPending, isError, error, refetch } = useAccounts();
   const deactivate = useDeactivateAccount();
   const [pending, setPending] = useState<string | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editing, setEditing] = useState<Account | null>(null);
+
+  const openCreate = () => {
+    setEditing(null);
+    setEditorOpen(true);
+  };
+  const openEdit = (account: Account) => {
+    setEditing(account);
+    setEditorOpen(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -37,7 +50,14 @@ function AccountsPage() {
           <h1 className="text-2xl font-semibold">Accounts</h1>
           <p className="text-sm text-muted-foreground">Bank accounts and credit cards</p>
         </div>
+        <Button onClick={openCreate}>
+          <Plus className="h-4 w-4" />
+          New account
+        </Button>
       </div>
+
+      <AccountModal open={editorOpen} onOpenChange={setEditorOpen} account={editing} />
+
 
       {isPending ? (
         <LoadingSkeleton rows={3} />
@@ -76,11 +96,17 @@ function AccountsPage() {
                     {maskAccount(a.lastFour)} · {a.currency}
                   </p>
                 </div>
-                {a.active ? (
-                  <Button variant="outline" size="sm" onClick={() => setPending(a.id)}>
-                    Deactivate
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => openEdit(a)}>
+                    Edit
                   </Button>
-                ) : null}
+                  {a.active ? (
+                    <Button variant="ghost" size="sm" onClick={() => setPending(a.id)}>
+                      Deactivate
+                    </Button>
+                  ) : null}
+                </div>
+
               </article>
             );
           })}
