@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Download, FileText, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -60,6 +61,7 @@ function StatementsPage() {
 
   const [file, setFile] = useState<File | null>(null);
   const [accountId, setAccountId] = useState("");
+  const [password, setPassword] = useState("");
   const [progress, setProgress] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
@@ -82,11 +84,12 @@ function StatementsPage() {
     if (!file || !accountId) return;
     setProgress(0);
     upload.mutate(
-      { file, accountId, onProgress: setProgress },
+      { file, accountId, ...(password ? { password } : {}), onProgress: setProgress },
       {
         onSuccess: () => {
           toast.success("Statement uploaded. Processing has started.");
           setFile(null);
+          setPassword("");
           setProgress(0);
         },
         onError: (e) => toast.error(errorMessage(e, "Statement upload failed.")),
@@ -144,11 +147,23 @@ function StatementsPage() {
               variant="ghost"
               size="icon"
               aria-label="Remove file"
-              onClick={() => setFile(null)}
+              onClick={() => {
+                setFile(null);
+                setPassword("");
+              }}
             >
               <X className="h-4 w-4" />
             </Button>
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex flex-wrap items-center gap-2">
+              <Input
+                type="password"
+                placeholder="PDF password (if protected)"
+                autoComplete="off"
+                className="w-52"
+                aria-label="PDF password, if protected"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
               <Select value={accountId} onValueChange={setAccountId}>
                 <SelectTrigger className="w-52" aria-label="Statement account">
                   <SelectValue placeholder="Select account" />

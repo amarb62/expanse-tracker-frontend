@@ -9,6 +9,7 @@ const store: Statement[] = [...mockStatements];
 export interface UploadStatementInput {
   file: File;
   accountId: string;
+  password?: string;
   onProgress?: (percent: number) => void;
 }
 
@@ -109,7 +110,12 @@ export const statementApi = {
     return mapStatement(data, accountName, stats.get(id) ?? EMPTY_STATS);
   },
 
-  async upload({ file, accountId, onProgress }: UploadStatementInput): Promise<Statement> {
+  async upload({
+    file,
+    accountId,
+    password,
+    onProgress,
+  }: UploadStatementInput): Promise<Statement> {
     if (USE_MOCK_API) {
       for (let p = 20; p <= 100; p += 20) {
         await new Promise((r) => setTimeout(r, 180));
@@ -148,6 +154,7 @@ export const statementApi = {
     const form = new FormData();
     form.append("file", file);
     form.append("accountId", accountId);
+    if (password) form.append("password", password);
     const { data } = await apiClient.post<BackendStatement>("/statements/upload", form, {
       headers: { "Content-Type": "multipart/form-data" },
       onUploadProgress: (event) => {
