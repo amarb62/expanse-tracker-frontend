@@ -1,8 +1,43 @@
-import { USE_MOCK_API, apiClient, setToken, clearToken, getToken } from "./client";
+import {
+  USE_MOCK_API,
+  apiClient,
+  setToken,
+  clearToken,
+  getToken,
+  getRefreshToken,
+  setRefreshToken,
+  clearRefreshToken,
+} from "./client";
 import { mockUser } from "./mock/data";
 import type { AuthResponse, User } from "@/types";
 
 const MOCK_TOKEN = "demo.jwt.token";
+const DEFAULT_CURRENCY = "INR";
+
+interface BackendUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface BackendAuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresInSeconds: number;
+}
+
+function toUser(backendUser: BackendUser): User {
+  return { ...backendUser, currency: DEFAULT_CURRENCY };
+}
+
+async function loginReal(email: string, password: string): Promise<AuthResponse> {
+  const { data } = await apiClient.post<BackendAuthResponse>("/auth/login", { email, password });
+  setToken(data.accessToken);
+  setRefreshToken(data.refreshToken);
+  const { data: me } = await apiClient.get<BackendUser>("/auth/me");
+  return { token: data.accessToken, user: toUser(me) };
+}
 
 export const authApi = {
   async login(email: string, password: string): Promise<AuthResponse> {
@@ -15,9 +50,7 @@ export const authApi = {
       setToken(response.token);
       return response;
     }
-    const { data } = await apiClient.post<AuthResponse>("/auth/login", { email, password });
-    setToken(data.token);
-    return data;
+    return loginReal(email, password);
   },
 
   async register(name: string, email: string, password: string): Promise<AuthResponse> {
@@ -27,13 +60,9 @@ export const authApi = {
       setToken(response.token);
       return response;
     }
-    const { data } = await apiClient.post<AuthResponse>("/auth/register", {
-      name,
-      email,
-      password,
-    });
-    setToken(data.token);
-    return data;
+    // Registration only creates the account; it doesn't issue tokens, so log in right after.
+    await apiClient.post<BackendUser>("/auth/register", { name, email, password });
+    return loginReal(email, password);
   },
 
   async me(): Promise<User> {
@@ -41,11 +70,18 @@ export const authApi = {
       if (!getToken()) throw new Error("Not authenticated");
       return mockUser;
     }
-    const { data } = await apiClient.get<User>("/auth/me");
-    return data;
+    const { data } = await apiClient.get<BackendUser>("/auth/me");
+    return toUser(data);
   },
 
   logout(): void {
+    if (!USE_MOCK_API) {
+      const refreshToken = getRefreshToken();
+      if (refreshToken) {
+        void apiClient.post("/auth/logout", { refreshToken }).catch(() => undefined);
+      }
+    }
     clearToken();
+    clearRefreshToken();
   },
 };

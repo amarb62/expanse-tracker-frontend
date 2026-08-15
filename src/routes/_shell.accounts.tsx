@@ -16,7 +16,10 @@ export const Route = createFileRoute("/_shell/accounts")({
   head: () => ({
     meta: [
       { title: "Accounts — Expensify" },
-      { name: "description", content: "Manage bank accounts and credit cards linked to Expensify." },
+      {
+        name: "description",
+        content: "Manage bank accounts and credit cards linked to Expensify.",
+      },
       { property: "og:title", content: "Accounts — Expensify" },
       {
         property: "og:description",
@@ -57,7 +60,6 @@ function AccountsPage() {
       </div>
 
       <AccountModal open={editorOpen} onOpenChange={setEditorOpen} account={editing} />
-
 
       {isPending ? (
         <LoadingSkeleton rows={3} />
@@ -106,7 +108,6 @@ function AccountsPage() {
                     </Button>
                   ) : null}
                 </div>
-
               </article>
             );
           })}

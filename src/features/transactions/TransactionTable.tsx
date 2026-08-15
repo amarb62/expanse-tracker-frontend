@@ -12,13 +12,13 @@ import { formatCurrency, formatDate } from "@/utils/format";
 import { cn } from "@/lib/utils";
 
 function amountTone(t: Transaction): string {
-  if (t.type === "INCOME" || t.type === "REFUND") return "text-positive";
+  if (t.type === "CREDIT" || t.type === "REFUND") return "text-positive";
   if (t.type === "PAYMENT") return "text-primary";
   return "text-foreground";
 }
 
 function amountPrefix(t: Transaction): string {
-  if (t.type === "INCOME" || t.type === "REFUND") return "+";
+  if (t.type === "CREDIT" || t.type === "REFUND") return "+";
   if (t.type === "PAYMENT") return "";
   return "−";
 }

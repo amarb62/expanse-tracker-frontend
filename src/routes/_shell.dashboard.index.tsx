@@ -17,7 +17,13 @@ import { MonthlyTrendChart } from "@/features/dashboard/MonthlyTrendChart";
 import { ExpenseModal } from "@/features/transactions/ExpenseModal";
 import { IncomeModal } from "@/features/transactions/IncomeModal";
 import { useAccounts, useMonthlyDashboard } from "@/hooks/queries";
-import { currentMonth, formatCurrency, formatMonthLabel, formatPercent, monthOptions } from "@/utils/format";
+import {
+  currentMonth,
+  formatCurrency,
+  formatMonthLabel,
+  formatPercent,
+  monthOptions,
+} from "@/utils/format";
 import { errorMessage } from "@/api/client";
 
 export const Route = createFileRoute("/_shell/dashboard/")({
@@ -145,7 +151,7 @@ function DashboardPage() {
               value={formatCurrency(data.totalExpenses)}
               icon={ArrowUpCircle}
               tone="negative"
-              onClick={() => void navigate({ to: "/transactions", search: { type: "PURCHASE" } })}
+              onClick={() => void navigate({ to: "/transactions", search: { type: "DEBIT" } })}
             />
             <DashboardCard
               label="Remaining"

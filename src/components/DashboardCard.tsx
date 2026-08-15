@@ -35,7 +35,9 @@ export function DashboardCard({
           "transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       )}
     >
-      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg", toneClasses[tone])}>
+      <span
+        className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg", toneClasses[tone])}
+      >
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <span className="min-w-0">

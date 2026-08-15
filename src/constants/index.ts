@@ -1,4 +1,4 @@
-import type { IncomeType, StatementStatus, TransactionType } from "@/types";
+import type { StatementStatus, TransactionType } from "@/types";
 
 export const APP_NAME = "Expensify";
 
@@ -8,15 +8,15 @@ export const CONFIDENCE_THRESHOLDS = {
 } as const;
 
 export const TRANSACTION_TYPES: TransactionType[] = [
-  "PURCHASE",
-  "PAYMENT",
+  "DEBIT",
+  "CREDIT",
+  "TRANSFER",
   "REFUND",
+  "PAYMENT",
   "FEE",
   "INTEREST",
-  "INCOME",
+  "CASH_WITHDRAWAL",
 ];
-
-export const INCOME_TYPES: IncomeType[] = ["SALARY", "BONUS", "FREELANCE", "OTHER"];
 
 export const STATEMENT_STATUS_LABEL: Record<StatementStatus, string> = {
   UPLOADED: "Uploaded",

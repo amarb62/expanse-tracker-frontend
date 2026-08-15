@@ -1,4 +1,7 @@
 import { USE_MOCK_API, apiClient } from "./client";
+import { accountApi } from "./accountApi";
+import { categoryApi } from "./categoryApi";
+import { statementApi } from "./statementApi";
 import { mockTransactions } from "./mock/data";
 import type {
   ExpenseInput,
@@ -6,7 +9,75 @@ import type {
   Page,
   Transaction,
   TransactionQuery,
+  TransactionType,
+  TransactionSource,
 } from "@/types";
+
+interface BackendTransaction {
+  id: string;
+  accountId: string;
+  statementId: string | null;
+  categoryId: string | null;
+  transactionDate: string;
+  description: string;
+  normalizedMerchant: string;
+  amount: number;
+  transactionType: TransactionType;
+  source: TransactionSource;
+  confidenceScore: number | null;
+}
+
+interface BackendPage<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+interface NameLookups {
+  accountName: Map<string, string>;
+  categoryName: Map<string, string>;
+  statementName: Map<string, string>;
+}
+
+const EMPTY_LOOKUPS: NameLookups = {
+  accountName: new Map(),
+  categoryName: new Map(),
+  statementName: new Map(),
+};
+
+async function buildLookups(): Promise<NameLookups> {
+  const [accounts, categories, statements] = await Promise.all([
+    accountApi.list(),
+    categoryApi.list(),
+    statementApi.list(),
+  ]);
+  return {
+    accountName: new Map(accounts.map((a) => [a.id, a.name])),
+    categoryName: new Map(categories.map((c) => [c.id, c.name])),
+    statementName: new Map(statements.map((s) => [s.id, s.fileName])),
+  };
+}
+
+function mapTransaction(t: BackendTransaction, lookups: NameLookups = EMPTY_LOOKUPS): Transaction {
+  return {
+    id: t.id,
+    date: t.transactionDate,
+    description: t.description,
+    merchant: t.normalizedMerchant,
+    amount: t.amount,
+    type: t.transactionType,
+    categoryId: t.categoryId,
+    categoryName: t.categoryId ? (lookups.categoryName.get(t.categoryId) ?? null) : null,
+    accountId: t.accountId,
+    accountName: lookups.accountName.get(t.accountId) ?? "",
+    source: t.source,
+    confidence: t.confidenceScore,
+    statementId: t.statementId,
+    statementName: t.statementId ? (lookups.statementName.get(t.statementId) ?? null) : null,
+  };
+}
 
 function applyFilters(query: TransactionQuery): Transaction[] {
   const search = query.search?.trim().toLowerCase() ?? "";
@@ -43,8 +114,38 @@ export const transactionApi = {
         totalPages: Math.max(1, Math.ceil(all.length / size)),
       };
     }
-    const { data } = await apiClient.get<Page<Transaction>>("/transactions", { params: query });
-    return data;
+    const { page = 0, size = 15, from, to, accountId, categoryId, type, source, search } = query;
+    const [{ data }, lookups] = await Promise.all([
+      apiClient.get<BackendPage<BackendTransaction>>("/transactions", {
+        params: {
+          page,
+          size,
+          fromDate: from || undefined,
+          toDate: to || undefined,
+          accountId: accountId || undefined,
+          categoryId: categoryId || undefined,
+          transactionType: type || undefined,
+          source: source || undefined,
+        },
+      }),
+      buildLookups(),
+    ]);
+    let content = data.content.map((t) => mapTransaction(t, lookups));
+    // The backend has no full-text search; best effort filter within the fetched page only.
+    const term = search?.trim().toLowerCase();
+    if (term) {
+      content = content.filter(
+        (t) =>
+          t.merchant.toLowerCase().includes(term) || t.description.toLowerCase().includes(term),
+      );
+    }
+    return {
+      content,
+      page: data.page,
+      size: data.size,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+    };
   },
 
   async get(id: string): Promise<Transaction> {
@@ -53,8 +154,11 @@ export const transactionApi = {
       if (!found) throw new Error("Transaction not found");
       return found;
     }
-    const { data } = await apiClient.get<Transaction>(`/transactions/${id}`);
-    return data;
+    const [{ data }, lookups] = await Promise.all([
+      apiClient.get<BackendTransaction>(`/transactions/${id}`),
+      buildLookups(),
+    ]);
+    return mapTransaction(data, lookups);
   },
 
   async createExpense(input: ExpenseInput): Promise<Transaction> {
@@ -65,7 +169,7 @@ export const transactionApi = {
         description: input.description,
         merchant: input.description,
         amount: input.amount,
-        type: "PURCHASE",
+        type: "DEBIT",
         categoryId: input.categoryId,
         categoryName: null,
         accountId: input.accountId,
@@ -74,13 +178,12 @@ export const transactionApi = {
         confidence: null,
         statementId: null,
         statementName: null,
-        ...(input.notes ? { notes: input.notes } : {}),
       };
       mockTransactions.unshift(transaction);
       return transaction;
     }
-    const { data } = await apiClient.post<Transaction>("/transactions/expenses", input);
-    return data;
+    const { data } = await apiClient.post<BackendTransaction>("/transactions/expenses", input);
+    return mapTransaction(data);
   },
 
   async createIncome(input: IncomeInput): Promise<Transaction> {
@@ -89,10 +192,10 @@ export const transactionApi = {
         id: `t-income-${Date.now()}`,
         date: new Date(input.date).toISOString(),
         description: input.description,
-        merchant: input.incomeType,
+        merchant: input.description,
         amount: input.amount,
-        type: "INCOME",
-        categoryId: null,
+        type: "CREDIT",
+        categoryId: input.categoryId,
         categoryName: null,
         accountId: input.accountId,
         accountName: "",
@@ -104,8 +207,8 @@ export const transactionApi = {
       mockTransactions.unshift(transaction);
       return transaction;
     }
-    const { data } = await apiClient.post<Transaction>("/transactions/income", input);
-    return data;
+    const { data } = await apiClient.post<BackendTransaction>("/transactions/income", input);
+    return mapTransaction(data);
   },
 
   async updateCategory(
@@ -132,10 +235,10 @@ export const transactionApi = {
       }
       return updated;
     }
-    const { data } = await apiClient.patch<Transaction>(`/transactions/${id}/category`, {
+    const { data } = await apiClient.patch<BackendTransaction>(`/transactions/${id}/category`, {
       categoryId,
-      rememberForMerchant,
+      createRule: rememberForMerchant,
     });
-    return data;
+    return mapTransaction(data);
   },
 };

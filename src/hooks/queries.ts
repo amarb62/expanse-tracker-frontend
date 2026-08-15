@@ -31,7 +31,8 @@ export const queryKeys = {
   statements: ["statements"] as const,
   statement: (id: string) => ["statements", id] as const,
   transactions: (query: TransactionQuery) => ["transactions", query] as const,
-  monthly: (month: string, accountId?: string) => ["dashboard", "monthly", month, accountId] as const,
+  monthly: (month: string, accountId?: string) =>
+    ["dashboard", "monthly", month, accountId] as const,
   yearly: (year: number, accountId?: string) => ["dashboard", "yearly", year, accountId] as const,
   pending: ["categorization", "pending"] as const,
 };
@@ -164,6 +165,17 @@ export function useDeleteStatement(): UseMutationResult<void, Error, string> {
   return useMutation({
     mutationFn: (id: string) => statementApi.remove(id),
     onSuccess: invalidate,
+  });
+}
+
+export function useDownloadStatement(): UseMutationResult<
+  void,
+  Error,
+  { id: string; fileName: string }
+> {
+  return useMutation({
+    mutationFn: ({ id, fileName }: { id: string; fileName: string }) =>
+      statementApi.download(id, fileName),
   });
 }
 

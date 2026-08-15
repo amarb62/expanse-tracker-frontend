@@ -80,6 +80,7 @@ export const mockCategories: Category[] = seedCategories.map((c) => ({
   ...c,
   active: true,
   transactionCount: c.parentId === null ? 12 : 4,
+  categoryType: "EXPENSE",
 }));
 
 const merchants: Array<{
@@ -90,21 +91,126 @@ const merchants: Array<{
   min: number;
   max: number;
 }> = [
-  { merchant: "Swiggy", description: "SWIGGY*ORDER BLR", categoryId: "c-food-delivery", type: "PURCHASE", min: 250, max: 1200 },
-  { merchant: "Zomato", description: "ZOMATO ONLINE ORDER", categoryId: "c-food-delivery", type: "PURCHASE", min: 200, max: 1400 },
-  { merchant: "Third Wave Coffee", description: "POS THIRD WAVE COFFEE", categoryId: "c-food-cafe", type: "PURCHASE", min: 180, max: 700 },
-  { merchant: "Amazon", description: "AMAZON.IN RETAIL", categoryId: "c-shop-online", type: "PURCHASE", min: 400, max: 9000 },
-  { merchant: "Croma", description: "CROMA ELECTRONICS", categoryId: "c-shop-elec", type: "PURCHASE", min: 1500, max: 22000 },
-  { merchant: "Landlord Transfer", description: "NEFT RENT PAYMENT", categoryId: "c-rent", type: "PURCHASE", min: 20000, max: 20000 },
-  { merchant: "IndiGo", description: "INDIGO AIR TICKET", categoryId: "c-travel", type: "PURCHASE", min: 2500, max: 12000 },
-  { merchant: "Uber", description: "UBER INDIA TRIP", categoryId: "c-travel", type: "PURCHASE", min: 120, max: 900 },
-  { merchant: "BESCOM", description: "ELECTRICITY BILL", categoryId: "c-utilities", type: "PURCHASE", min: 900, max: 3200 },
-  { merchant: "Airtel", description: "AIRTEL BROADBAND", categoryId: "c-utilities", type: "PURCHASE", min: 799, max: 1499 },
-  { merchant: "XYZ Services", description: "XYZ SERVICES PVT LTD", categoryId: "c-other", type: "PURCHASE", min: 400, max: 1800 },
-  { merchant: "Card Payment", description: "CREDIT CARD PAYMENT RECEIVED", categoryId: "c-other", type: "PAYMENT", min: 5000, max: 25000 },
-  { merchant: "Amazon", description: "AMAZON REFUND", categoryId: "c-shop-online", type: "REFUND", min: 300, max: 2500 },
-  { merchant: "HDFC Bank", description: "LATE PAYMENT FEE", categoryId: "c-other", type: "FEE", min: 200, max: 600 },
-  { merchant: "HDFC Bank", description: "FINANCE CHARGES", categoryId: "c-other", type: "INTEREST", min: 150, max: 900 },
+  {
+    merchant: "Swiggy",
+    description: "SWIGGY*ORDER BLR",
+    categoryId: "c-food-delivery",
+    type: "DEBIT",
+    min: 250,
+    max: 1200,
+  },
+  {
+    merchant: "Zomato",
+    description: "ZOMATO ONLINE ORDER",
+    categoryId: "c-food-delivery",
+    type: "DEBIT",
+    min: 200,
+    max: 1400,
+  },
+  {
+    merchant: "Third Wave Coffee",
+    description: "POS THIRD WAVE COFFEE",
+    categoryId: "c-food-cafe",
+    type: "DEBIT",
+    min: 180,
+    max: 700,
+  },
+  {
+    merchant: "Amazon",
+    description: "AMAZON.IN RETAIL",
+    categoryId: "c-shop-online",
+    type: "DEBIT",
+    min: 400,
+    max: 9000,
+  },
+  {
+    merchant: "Croma",
+    description: "CROMA ELECTRONICS",
+    categoryId: "c-shop-elec",
+    type: "DEBIT",
+    min: 1500,
+    max: 22000,
+  },
+  {
+    merchant: "Landlord Transfer",
+    description: "NEFT RENT PAYMENT",
+    categoryId: "c-rent",
+    type: "DEBIT",
+    min: 20000,
+    max: 20000,
+  },
+  {
+    merchant: "IndiGo",
+    description: "INDIGO AIR TICKET",
+    categoryId: "c-travel",
+    type: "DEBIT",
+    min: 2500,
+    max: 12000,
+  },
+  {
+    merchant: "Uber",
+    description: "UBER INDIA TRIP",
+    categoryId: "c-travel",
+    type: "DEBIT",
+    min: 120,
+    max: 900,
+  },
+  {
+    merchant: "BESCOM",
+    description: "ELECTRICITY BILL",
+    categoryId: "c-utilities",
+    type: "DEBIT",
+    min: 900,
+    max: 3200,
+  },
+  {
+    merchant: "Airtel",
+    description: "AIRTEL BROADBAND",
+    categoryId: "c-utilities",
+    type: "DEBIT",
+    min: 799,
+    max: 1499,
+  },
+  {
+    merchant: "XYZ Services",
+    description: "XYZ SERVICES PVT LTD",
+    categoryId: "c-other",
+    type: "DEBIT",
+    min: 400,
+    max: 1800,
+  },
+  {
+    merchant: "Card Payment",
+    description: "CREDIT CARD PAYMENT RECEIVED",
+    categoryId: "c-other",
+    type: "PAYMENT",
+    min: 5000,
+    max: 25000,
+  },
+  {
+    merchant: "Amazon",
+    description: "AMAZON REFUND",
+    categoryId: "c-shop-online",
+    type: "REFUND",
+    min: 300,
+    max: 2500,
+  },
+  {
+    merchant: "HDFC Bank",
+    description: "LATE PAYMENT FEE",
+    categoryId: "c-other",
+    type: "FEE",
+    min: 200,
+    max: 600,
+  },
+  {
+    merchant: "HDFC Bank",
+    description: "FINANCE CHARGES",
+    categoryId: "c-other",
+    type: "INTEREST",
+    min: 150,
+    max: 900,
+  },
 ];
 
 // Deterministic pseudo-random generator so the demo dataset is stable.
@@ -137,12 +243,12 @@ function buildTransactions(): Transaction[] {
       description: "SALARY CREDIT",
       merchant: "Acme Technologies",
       amount: 100000,
-      type: "INCOME",
+      type: "CREDIT",
       categoryId: null,
       categoryName: null,
       accountId: "a-1",
       accountName: "HDFC Salary Account",
-      source: "STATEMENT",
+      source: "PDF",
       confidence: 0.99,
       statementId: "s-1",
       statementName: "HDFC-Salary-Statement.pdf",
@@ -154,7 +260,7 @@ function buildTransactions(): Transaction[] {
       const day = 1 + Math.floor(random() * 27);
       const amount = Math.round(spec.min + random() * (spec.max - spec.min));
       const confidence = Math.round((0.5 + random() * 0.5) * 100) / 100;
-      const isCard = spec.type !== "INCOME" && random() > 0.45;
+      const isCard = spec.type !== "CREDIT" && random() > 0.45;
       n += 1;
       out.push({
         id: `t-${n}`,
@@ -167,7 +273,7 @@ function buildTransactions(): Transaction[] {
         categoryName: categoryName(spec.categoryId),
         accountId: isCard ? "a-2" : "a-1",
         accountName: isCard ? "HDFC Credit Card" : "HDFC Salary Account",
-        source: random() > 0.9 ? "MANUAL" : "STATEMENT",
+        source: random() > 0.9 ? "MANUAL" : "PDF",
         confidence: random() > 0.9 ? null : confidence,
         statementId: "s-1",
         statementName: "HDFC-Salary-Statement.pdf",
@@ -228,11 +334,11 @@ export function monthKey(iso: string): string {
 }
 
 export function isExpense(t: Transaction): boolean {
-  return t.type === "PURCHASE" || t.type === "FEE" || t.type === "INTEREST";
+  return t.type === "DEBIT" || t.type === "FEE" || t.type === "INTEREST";
 }
 
 export function isCredit(t: Transaction): boolean {
-  return t.type === "INCOME" || t.type === "REFUND";
+  return t.type === "CREDIT" || t.type === "REFUND";
 }
 
 export function summarize(transactions: Transaction[]): {

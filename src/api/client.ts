@@ -1,4 +1,4 @@
-import axios, { AxiosError, type AxiosInstance } from "axios";
+import axios, { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from "axios";
 
 export const API_BASE_URL: string =
   (import.meta.env["VITE_API_BASE_URL"] as string | undefined) ?? "";
@@ -11,6 +11,7 @@ export const API_BASE_URL: string =
 export const USE_MOCK_API = API_BASE_URL.length === 0;
 
 const TOKEN_KEY = "pf.access-token";
+const REFRESH_TOKEN_KEY = "pf.refresh-token";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -25,6 +26,21 @@ export function setToken(token: string): void {
 export function clearToken(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(TOKEN_KEY);
+}
+
+export function getRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+export function setRefreshToken(token: string): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(REFRESH_TOKEN_KEY, token);
+}
+
+export function clearRefreshToken(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
 export class ApiError extends Error {
@@ -58,15 +74,61 @@ function friendlyMessage(status: number): string {
   return "The request could not be completed.";
 }
 
+interface RetryableConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+const NO_REFRESH_RETRY_PATHS = ["/auth/login", "/auth/register", "/auth/refresh", "/auth/logout"];
+
+function isAuthPath(url?: string): boolean {
+  return Boolean(url) && NO_REFRESH_RETRY_PATHS.some((p) => url!.includes(p));
+}
+
+let refreshPromise: Promise<string> | null = null;
+
+async function refreshAccessToken(): Promise<string> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) throw new Error("No refresh token available");
+  const { data } = await axios.post<{ accessToken: string; refreshToken: string }>(
+    `${API_BASE_URL || "/api/v1"}/auth/refresh`,
+    { refreshToken },
+  );
+  setToken(data.accessToken);
+  setRefreshToken(data.refreshToken);
+  return data.accessToken;
+}
+
+function redirectToLogin(): void {
+  clearToken();
+  clearRefreshToken();
+  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+    window.location.assign("/login");
+  }
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<{ message?: string }>) => {
+  async (error: AxiosError<{ message?: string }>) => {
     const status = error.response?.status ?? 0;
-    if (status === 401) {
-      clearToken();
-      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-        window.location.assign("/login");
+    const config = error.config as RetryableConfig | undefined;
+
+    if (status === 401 && config && !config._retry && !isAuthPath(config.url)) {
+      config._retry = true;
+      try {
+        refreshPromise ??= refreshAccessToken().finally(() => {
+          refreshPromise = null;
+        });
+        const newToken = await refreshPromise;
+        config.headers.set("Authorization", `Bearer ${newToken}`);
+        return apiClient.request(config);
+      } catch {
+        redirectToLogin();
+        return Promise.reject(new ApiError(friendlyMessage(401), 401));
       }
+    }
+
+    if (status === 401) {
+      redirectToLogin();
     }
     const message = error.response?.data?.message ?? friendlyMessage(status);
     return Promise.reject(new ApiError(message, status));

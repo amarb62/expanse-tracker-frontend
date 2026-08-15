@@ -16,12 +16,7 @@ import { CategorySelector } from "@/components/CategorySelector";
 import { useCategories, useUpdateTransactionCategory } from "@/hooks/queries";
 import { errorMessage } from "@/api/client";
 import type { Transaction } from "@/types";
-import {
-  CONFIDENCE_LABEL,
-  confidenceLevel,
-  formatCurrency,
-  formatDate,
-} from "@/utils/format";
+import { CONFIDENCE_LABEL, confidenceLevel, formatCurrency, formatDate } from "@/utils/format";
 
 interface Props {
   transaction: Transaction | null;
@@ -57,8 +52,7 @@ export function TransactionDetails({ transaction, onOpenChange }: Props) {
           setEditing(false);
           onOpenChange(false);
         },
-        onError: (error) =>
-          toast.error(errorMessage(error, "We couldn't update this category.")),
+        onError: (error) => toast.error(errorMessage(error, "We couldn't update this category.")),
       },
     );
   };

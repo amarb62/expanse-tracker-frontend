@@ -90,7 +90,10 @@ function LoginPage() {
         </form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           New here?{" "}
-          <Link to="/register" className="font-medium text-primary underline-offset-4 hover:underline">
+          <Link
+            to="/register"
+            className="font-medium text-primary underline-offset-4 hover:underline"
+          >
             Create an account
           </Link>
         </p>

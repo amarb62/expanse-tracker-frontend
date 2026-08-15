@@ -71,7 +71,6 @@ function CategoriesPage() {
         category={deleting}
       />
 
-
       {isPending ? (
         <LoadingSkeleton rows={5} />
       ) : isError ? (

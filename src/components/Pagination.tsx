@@ -10,10 +10,7 @@ interface Props {
 
 export function Pagination({ page, totalPages, totalElements, onPageChange }: Props) {
   return (
-    <nav
-      className="flex flex-wrap items-center justify-between gap-3 pt-4"
-      aria-label="Pagination"
-    >
+    <nav className="flex flex-wrap items-center justify-between gap-3 pt-4" aria-label="Pagination">
       <p className="text-sm text-muted-foreground">
         Page {page + 1} of {totalPages} · {totalElements} transactions
       </p>

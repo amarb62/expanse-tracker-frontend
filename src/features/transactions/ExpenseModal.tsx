@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -31,7 +30,6 @@ const schema = z.object({
   description: z.string().trim().min(1, "Description is required").max(140),
   categoryId: z.string().min(1, "Category is required"),
   accountId: z.string().min(1, "Account is required"),
-  notes: z.string().trim().max(500).optional(),
 });
 
 type FormValues = z.input<typeof schema>;
@@ -55,7 +53,6 @@ export function ExpenseModal({
       description: "",
       categoryId: "",
       accountId: "",
-      notes: "",
     },
   });
 
@@ -68,7 +65,6 @@ export function ExpenseModal({
         description: values.description,
         categoryId: values.categoryId,
         accountId: values.accountId,
-        ...(values.notes ? { notes: values.notes } : {}),
       },
       {
         onSuccess: () => {
@@ -160,11 +156,6 @@ export function ExpenseModal({
                 <p className="text-xs text-destructive">{errors.accountId.message}</p>
               ) : null}
             </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="expense-notes">Notes (optional)</Label>
-            <Textarea id="expense-notes" rows={3} {...form.register("notes")} />
           </div>
 
           <DialogFooter>

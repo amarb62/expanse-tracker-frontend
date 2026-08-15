@@ -91,9 +91,7 @@ export function CategoryLegend({
               aria-hidden="true"
             />
             <span className="flex-1 truncate text-foreground">{c.categoryName}</span>
-            <span className="numeric font-medium text-foreground">
-              {formatCurrency(c.amount)}
-            </span>
+            <span className="numeric font-medium text-foreground">{formatCurrency(c.amount)}</span>
             <span className="numeric w-14 text-right text-xs text-muted-foreground">
               {formatPercent(c.percentageOfCredit, 1)}
             </span>

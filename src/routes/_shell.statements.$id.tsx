@@ -40,7 +40,13 @@ function StatementDetailPage() {
   }
 
   const stepIndex =
-    data.status === "PROCESSED" ? 3 : data.status === "PROCESSING" ? 2 : data.status === "FAILED" ? 1 : 0;
+    data.status === "PROCESSED"
+      ? 3
+      : data.status === "PROCESSING"
+        ? 2
+        : data.status === "FAILED"
+          ? 1
+          : 0;
 
   return (
     <div className="space-y-6">
@@ -69,12 +75,17 @@ function StatementDetailPage() {
           </p>
         ) : (
           <>
-            <Progress value={((stepIndex + 1) / STEPS.length) * 100} aria-label="Processing progress" />
+            <Progress
+              value={((stepIndex + 1) / STEPS.length) * 100}
+              aria-label="Processing progress"
+            />
             <ol className="grid gap-2 text-sm sm:grid-cols-4">
               {STEPS.map((step, i) => (
                 <li
                   key={step}
-                  className={i <= stepIndex ? "font-medium text-foreground" : "text-muted-foreground"}
+                  className={
+                    i <= stepIndex ? "font-medium text-foreground" : "text-muted-foreground"
+                  }
                 >
                   {step}
                 </li>

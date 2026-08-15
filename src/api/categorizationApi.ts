@@ -5,6 +5,40 @@ import type { AIReviewTransaction } from "@/types";
 
 const approved = new Set<string>();
 
+interface BackendReviewItem {
+  transactionId: string;
+  accountId: string;
+  transactionDate: string;
+  description: string;
+  normalizedMerchant: string;
+  amount: number;
+  suggestedCategoryId: string | null;
+  suggestedCategoryName: string | null;
+  confidence: number | null;
+  reason: string;
+}
+
+function mapReviewItem(t: BackendReviewItem): AIReviewTransaction {
+  return {
+    id: t.transactionId,
+    date: t.transactionDate,
+    description: t.description,
+    merchant: t.normalizedMerchant,
+    amount: t.amount,
+    type: "DEBIT",
+    categoryId: null,
+    categoryName: null,
+    accountId: t.accountId,
+    accountName: "",
+    source: "AI",
+    confidence: t.confidence,
+    statementId: null,
+    statementName: null,
+    suggestedCategoryId: t.suggestedCategoryId,
+    suggestedCategoryName: t.suggestedCategoryName,
+  };
+}
+
 export const categorizationApi = {
   async pending(): Promise<AIReviewTransaction[]> {
     if (USE_MOCK_API) {
@@ -22,8 +56,8 @@ export const categorizationApi = {
           suggestedCategoryName: t.categoryName,
         }));
     }
-    const { data } = await apiClient.get<AIReviewTransaction[]>("/categorization/pending");
-    return data;
+    const { data } = await apiClient.get<BackendReviewItem[]>("/categorization/review");
+    return data.map(mapReviewItem);
   },
 
   async approve(transactionIds: string[]): Promise<void> {
@@ -31,6 +65,7 @@ export const categorizationApi = {
       transactionIds.forEach((id) => approved.add(id));
       return;
     }
-    await apiClient.post("/categorization/approve", { transactionIds });
+    // The backend only exposes a per-transaction approve endpoint.
+    await Promise.all(transactionIds.map((id) => apiClient.post(`/categorization/${id}/approve`)));
   },
 };

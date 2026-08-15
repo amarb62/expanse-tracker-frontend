@@ -47,9 +47,7 @@ export function CategoryModal({ open, onOpenChange, categories, category }: Prop
     setColor(category?.color ?? COLORS[0]!);
   }, [open, category]);
 
-  const roots = categories.filter(
-    (c) => c.parentId === null && c.active && c.id !== category?.id,
-  );
+  const roots = categories.filter((c) => c.parentId === null && c.active && c.id !== category?.id);
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();

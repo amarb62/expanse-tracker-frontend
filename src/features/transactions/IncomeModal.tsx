@@ -20,16 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAccounts, useCreateIncome } from "@/hooks/queries";
-import { INCOME_TYPES } from "@/constants";
+import { CategorySelector } from "@/components/CategorySelector";
+import { useAccounts, useCategories, useCreateIncome } from "@/hooks/queries";
 import { errorMessage } from "@/api/client";
-import type { IncomeType } from "@/types";
 
 const schema = z.object({
   amount: z.coerce.number().positive("Amount must be greater than 0"),
   date: z.string().min(1, "Date is required"),
   description: z.string().trim().min(1, "Description is required").max(140),
-  incomeType: z.enum(["SALARY", "BONUS", "FREELANCE", "OTHER"]),
+  categoryId: z.string().min(1, "Category is required"),
   accountId: z.string().min(1, "Account is required"),
 });
 
@@ -43,6 +42,8 @@ export function IncomeModal({
   onOpenChange: (open: boolean) => void;
 }) {
   const { data: accounts = [] } = useAccounts();
+  const { data: categories = [] } = useCategories();
+  const incomeCategories = categories.filter((c) => c.categoryType === "INCOME");
   const createIncome = useCreateIncome();
 
   const form = useForm<FormValues>({
@@ -51,7 +52,7 @@ export function IncomeModal({
       amount: "" as unknown as number,
       date: new Date().toISOString().slice(0, 10),
       description: "",
-      incomeType: "SALARY",
+      categoryId: "",
       accountId: "",
     },
   });
@@ -112,24 +113,17 @@ export function IncomeModal({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="income-type">Income type</Label>
-              <Select
-                value={form.watch("incomeType")}
-                onValueChange={(v) =>
-                  form.setValue("incomeType", v as IncomeType, { shouldValidate: true })
-                }
-              >
-                <SelectTrigger id="income-type">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {INCOME_TYPES.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t.charAt(0) + t.slice(1).toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="income-category">Category</Label>
+              <CategorySelector
+                id="income-category"
+                categories={incomeCategories}
+                value={form.watch("categoryId")}
+                onChange={(v) => form.setValue("categoryId", v, { shouldValidate: true })}
+                placeholder="Select category"
+              />
+              {errors.categoryId ? (
+                <p className="text-xs text-destructive">{errors.categoryId.message}</p>
+              ) : null}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="income-account">Account</Label>

@@ -41,14 +41,19 @@ export function ConfidenceBadge({ confidence }: { confidence: number | null }) {
 
 export function TypeBadge({ type }: { type: TransactionType }) {
   const tone: Record<TransactionType, string> = {
-    PURCHASE: "bg-muted text-foreground",
+    DEBIT: "bg-muted text-foreground",
+    CREDIT: "bg-positive/15 text-positive",
+    TRANSFER: "bg-muted text-foreground",
     PAYMENT: "bg-primary/12 text-primary",
     REFUND: "bg-positive/15 text-positive",
     FEE: "bg-warning/15 text-warning-foreground",
     INTEREST: "bg-warning/15 text-warning-foreground",
-    INCOME: "bg-positive/15 text-positive",
+    CASH_WITHDRAWAL: "bg-muted text-foreground",
   };
-  const label = type.charAt(0) + type.slice(1).toLowerCase();
+  const label = type
+    .split("_")
+    .map((part) => part.charAt(0) + part.slice(1).toLowerCase())
+    .join(" ");
   return (
     <Badge variant="outline" className={cn("border-transparent", tone[type])}>
       {label}

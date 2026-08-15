@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { FileText, Trash2, Upload, X } from "lucide-react";
+import { Download, FileText, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -25,6 +25,7 @@ import { EmptyState, ErrorState, LoadingSkeleton } from "@/components/states";
 import {
   useAccounts,
   useDeleteStatement,
+  useDownloadStatement,
   useStatements,
   useUploadStatement,
 } from "@/hooks/queries";
@@ -55,6 +56,7 @@ function StatementsPage() {
   const { data: statements, isPending, isError, error, refetch } = useStatements();
   const upload = useUploadStatement();
   const remove = useDeleteStatement();
+  const download = useDownloadStatement();
 
   const [file, setFile] = useState<File | null>(null);
   const [accountId, setAccountId] = useState("");
@@ -226,6 +228,25 @@ function StatementsPage() {
                           <Link to="/statements/$id" params={{ id: s.id }}>
                             View
                           </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Download ${s.fileName}`}
+                          disabled={download.isPending}
+                          onClick={() =>
+                            download.mutate(
+                              { id: s.id, fileName: s.fileName },
+                              {
+                                onError: (e) =>
+                                  toast.error(
+                                    errorMessage(e, "We couldn't download that statement."),
+                                  ),
+                              },
+                            )
+                          }
+                        >
+                          <Download className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"

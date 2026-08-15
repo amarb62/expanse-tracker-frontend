@@ -12,7 +12,7 @@ export interface AuthResponse {
   user: User;
 }
 
-export type AccountType = "BANK_ACCOUNT" | "CREDIT_CARD";
+export type AccountType = "BANK_ACCOUNT" | "CREDIT_CARD" | "CASH" | "OTHER";
 
 export interface Account {
   id: UUID;
@@ -42,14 +42,9 @@ export interface Statement {
 }
 
 export type TransactionType =
-  | "PURCHASE"
-  | "PAYMENT"
-  | "REFUND"
-  | "FEE"
-  | "INTEREST"
-  | "INCOME";
+  "DEBIT" | "CREDIT" | "TRANSFER" | "REFUND" | "PAYMENT" | "FEE" | "INTEREST" | "CASH_WITHDRAWAL";
 
-export type TransactionSource = "STATEMENT" | "MANUAL" | "RECURRING";
+export type TransactionSource = "PDF" | "MANUAL" | "AI" | "RULE" | "SYSTEM";
 
 export interface Transaction {
   id: UUID;
@@ -66,7 +61,6 @@ export interface Transaction {
   confidence: number | null;
   statementId: UUID | null;
   statementName: string | null;
-  notes?: string | undefined;
 }
 
 export interface Page<T> {
@@ -89,6 +83,8 @@ export interface TransactionQuery {
   search?: string | undefined;
 }
 
+export type CategoryType = "EXPENSE" | "INCOME" | "TRANSFER";
+
 export interface Category {
   id: UUID;
   name: string;
@@ -96,6 +92,7 @@ export interface Category {
   color: string;
   active: boolean;
   transactionCount: number;
+  categoryType: CategoryType;
 }
 
 export interface CategorySummary {
@@ -145,15 +142,12 @@ export interface ExpenseInput {
   description: string;
   categoryId: string;
   accountId: string;
-  notes?: string | undefined;
 }
-
-export type IncomeType = "SALARY" | "BONUS" | "FREELANCE" | "OTHER";
 
 export interface IncomeInput {
   amount: number;
   date: string;
   description: string;
-  incomeType: IncomeType;
+  categoryId: string;
   accountId: string;
 }

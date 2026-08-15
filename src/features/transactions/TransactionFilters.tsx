@@ -122,18 +122,18 @@ export function TransactionFilters({ value, onChange, accounts, categories }: Pr
         <Label htmlFor="tx-source">Source</Label>
         <Select
           value={value.source || ALL}
-          onValueChange={(v) =>
-            set({ source: v === ALL ? "" : (v as TransactionQuery["source"]) })
-          }
+          onValueChange={(v) => set({ source: v === ALL ? "" : (v as TransactionQuery["source"]) })}
         >
           <SelectTrigger id="tx-source">
             <SelectValue placeholder="All sources" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>All sources</SelectItem>
-            <SelectItem value="STATEMENT">Statement</SelectItem>
+            <SelectItem value="PDF">Statement</SelectItem>
             <SelectItem value="MANUAL">Manual</SelectItem>
-            <SelectItem value="RECURRING">Recurring</SelectItem>
+            <SelectItem value="AI">AI</SelectItem>
+            <SelectItem value="RULE">Rule</SelectItem>
+            <SelectItem value="SYSTEM">System</SelectItem>
           </SelectContent>
         </Select>
       </div>
