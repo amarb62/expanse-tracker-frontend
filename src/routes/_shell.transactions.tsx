@@ -26,12 +26,12 @@ export const Route = createFileRoute("/_shell/transactions")({
   }),
   head: () => ({
     meta: [
-      { title: "Transactions — Ledgerly" },
+      { title: "Transactions — Expensify" },
       {
         name: "description",
         content: "Search, filter and review every imported and manual transaction.",
       },
-      { property: "og:title", content: "Transactions — Ledgerly" },
+      { property: "og:title", content: "Transactions — Expensify" },
       {
         property: "og:description",
         content: "Search, filter and review every imported and manual transaction.",

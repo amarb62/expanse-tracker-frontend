@@ -8,9 +8,9 @@ import { API_BASE_URL, USE_MOCK_API } from "@/api/client";
 export const Route = createFileRoute("/_shell/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Ledgerly" },
+      { title: "Settings — Expensify" },
       { name: "description", content: "Profile, confidence thresholds and API configuration." },
-      { property: "og:title", content: "Settings — Ledgerly" },
+      { property: "og:title", content: "Settings — Expensify" },
       {
         property: "og:description",
         content: "Profile, confidence thresholds and API configuration.",

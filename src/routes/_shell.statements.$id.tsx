@@ -11,9 +11,9 @@ import { formatDate } from "@/utils/format";
 export const Route = createFileRoute("/_shell/statements/$id")({
   head: () => ({
     meta: [
-      { title: "Statement details — Ledgerly" },
+      { title: "Statement details — Expensify" },
       { name: "description", content: "Processing status and import results for a statement." },
-      { property: "og:title", content: "Statement details — Ledgerly" },
+      { property: "og:title", content: "Statement details — Expensify" },
       {
         property: "og:description",
         content: "Processing status and import results for a statement.",

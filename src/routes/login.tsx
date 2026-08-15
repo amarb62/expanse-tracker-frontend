@@ -13,15 +13,15 @@ import { errorMessage } from "@/api/client";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Log in — Ledgerly Finance Analytics" },
+      { title: "Log in — Expensify Finance Analytics" },
       {
         name: "description",
-        content: "Log in to Ledgerly to track expenses, statements and monthly spending insights.",
+        content: "Log in to Expensify to track expenses, statements and monthly spending insights.",
       },
-      { property: "og:title", content: "Log in — Ledgerly Finance Analytics" },
+      { property: "og:title", content: "Log in — Expensify Finance Analytics" },
       {
         property: "og:description",
-        content: "Log in to Ledgerly to track expenses, statements and monthly spending insights.",
+        content: "Log in to Expensify to track expenses, statements and monthly spending insights.",
       },
     ],
   }),

@@ -79,10 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ledgerly — Personal Finance & Expense Analytics" },
+      { title: "Expensify — Personal Finance & Expense Analytics" },
       { name: "description", content: "Track income, expenses and AI-categorized transactions from your bank statements." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Ledgerly — Personal Finance & Expense Analytics" },
+      { property: "og:title", content: "Expensify — Personal Finance & Expense Analytics" },
       { property: "og:description", content: "Track income, expenses and AI-categorized transactions from your bank statements." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

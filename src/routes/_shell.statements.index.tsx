@@ -35,12 +35,12 @@ import { formatDate, formatFileSize } from "@/utils/format";
 export const Route = createFileRoute("/_shell/statements/")({
   head: () => ({
     meta: [
-      { title: "Statements — Ledgerly" },
+      { title: "Statements — Expensify" },
       {
         name: "description",
         content: "Upload bank and credit-card PDF statements and track processing status.",
       },
-      { property: "og:title", content: "Statements — Ledgerly" },
+      { property: "og:title", content: "Statements — Expensify" },
       {
         property: "og:description",
         content: "Upload bank and credit-card PDF statements and track processing status.",

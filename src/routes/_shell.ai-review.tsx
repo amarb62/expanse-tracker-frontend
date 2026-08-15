@@ -19,12 +19,12 @@ import { formatCurrency, formatDate } from "@/utils/format";
 export const Route = createFileRoute("/_shell/ai-review")({
   head: () => ({
     meta: [
-      { title: "AI Review — Ledgerly" },
+      { title: "AI Review — Expensify" },
       {
         name: "description",
         content: "Review and correct low-confidence AI category suggestions.",
       },
-      { property: "og:title", content: "AI Review — Ledgerly" },
+      { property: "og:title", content: "AI Review — Expensify" },
       {
         property: "og:description",
         content: "Review and correct low-confidence AI category suggestions.",

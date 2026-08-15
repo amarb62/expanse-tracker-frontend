@@ -15,12 +15,12 @@ import type { Account } from "@/types";
 export const Route = createFileRoute("/_shell/accounts")({
   head: () => ({
     meta: [
-      { title: "Accounts — Ledgerly" },
-      { name: "description", content: "Manage bank accounts and credit cards linked to Ledgerly." },
-      { property: "og:title", content: "Accounts — Ledgerly" },
+      { title: "Accounts — Expensify" },
+      { name: "description", content: "Manage bank accounts and credit cards linked to Expensify." },
+      { property: "og:title", content: "Accounts — Expensify" },
       {
         property: "og:description",
-        content: "Manage bank accounts and credit cards linked to Ledgerly.",
+        content: "Manage bank accounts and credit cards linked to Expensify.",
       },
     ],
   }),

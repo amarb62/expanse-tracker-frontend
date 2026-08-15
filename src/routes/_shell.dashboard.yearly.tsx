@@ -19,12 +19,12 @@ import { errorMessage } from "@/api/client";
 export const Route = createFileRoute("/_shell/dashboard/yearly")({
   head: () => ({
     meta: [
-      { title: "Yearly Dashboard — Ledgerly" },
+      { title: "Yearly Dashboard — Expensify" },
       {
         name: "description",
         content: "Compare credited income and expenses month by month across the whole year.",
       },
-      { property: "og:title", content: "Yearly Dashboard — Ledgerly" },
+      { property: "og:title", content: "Yearly Dashboard — Expensify" },
       {
         property: "og:description",
         content: "Yearly totals, averages and month-by-month spending comparison.",

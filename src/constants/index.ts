@@ -1,6 +1,6 @@
 import type { IncomeType, StatementStatus, TransactionType } from "@/types";
 
-export const APP_NAME = "Ledgerly";
+export const APP_NAME = "Expensify";
 
 export const CONFIDENCE_THRESHOLDS = {
   high: 0.9,

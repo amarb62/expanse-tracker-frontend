@@ -13,9 +13,9 @@ import { errorMessage } from "@/api/client";
 export const Route = createFileRoute("/_shell/categories")({
   head: () => ({
     meta: [
-      { title: "Categories — Ledgerly" },
+      { title: "Categories — Expensify" },
       { name: "description", content: "Manage the category hierarchy used to classify spending." },
-      { property: "og:title", content: "Categories — Ledgerly" },
+      { property: "og:title", content: "Categories — Expensify" },
       {
         property: "og:description",
         content: "Manage the category hierarchy used to classify spending.",
