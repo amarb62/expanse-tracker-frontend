@@ -41,7 +41,7 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const form = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { email: "aarav@example.com", password: "password" },
+    defaultValues: { email: "", password: "" },
   });
 
   const submit = form.handleSubmit(async (values) => {
